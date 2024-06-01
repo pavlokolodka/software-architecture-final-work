@@ -76,3 +76,78 @@ stateDiagram
     BuildingPartB --> Finalizing: getResult()
     Finalizing --> [*]
 ```
+
+## Шаблон проектування Front Controller
+
+Посилання: https://www.baeldung.com/java-front-controller-pattern
+### Призначення та застосування шаблону
+Шаблон проектування Front Controller використовується для централізованого управління обробкою запитів в веб-застосунках. Він дозволяє всі запити користувачів проходити через один об'єкт контролера, який керує навігацією та обробкою запитів. Це допомагає спростити і уніфікувати обробку запитів, забезпечити контроль над доступом і виконанням спільних задач, таких як аутентифікація, логування або керування сесією.
+
+### Основні випадки застосування:
+
+- Коли необхідно централізовано керувати обробкою запитів.
+- Коли потрібно виконувати загальні задачі (аутентифікація, логування тощо) для кожного запиту.
+- Коли бажано зменшити дублювання коду у контролерах.
+
+
+### Опис основних структурних елементів
+- FrontController: Центральний об'єкт, який приймає всі запити, визначає відповідні дії для їх обробки та координує роботу з іншими компонентами.
+- Dispatcher: Відповідає за перенаправлення запиту до відповідного контролера чи обробника.
+- Controller: Абстракція або інтерфейс для різних конкретних контролерів, які обробляють різні типи запитів.
+- View: Компонент, який відповідає за представлення даних користувачу.
+
+
+### UML діаграма
+
+Діаграма класів:
+
+```mermaid
+classDiagram
+    class FrontController {
+        -dispatcher: Dispatcher
+        +handleRequest(request: Request): void
+    }
+    
+    class Dispatcher {
+        +dispatch(request: Request): void
+    }
+    
+    class Controller {
+        <<interface>>
+        +processRequest(request: Request): void
+    }
+    
+    class ConcreteController1 {
+        +processRequest(request: Request): void
+    }
+    
+    class ConcreteController2 {
+        +processRequest(request: Request): void
+    }
+    
+    class View {
+        +show(): void
+    }
+    
+    FrontController --> Dispatcher
+    Dispatcher --> Controller
+    Controller <|-- ConcreteController1
+    Controller <|-- ConcreteController2
+    ConcreteController1 --> View
+    ConcreteController2 --> View
+
+```
+
+Діаграма стану:
+
+```mermaid
+stateDiagram
+    [*] --> Waiting
+    Waiting --> HandlingRequest: handleRequest()
+    HandlingRequest --> Dispatching: dispatch(request)
+    Dispatching --> Processing: processRequest()
+    Processing --> Rendering: render()
+    Rendering --> Waiting: show()
+    Rendering --> [*]
+
+```
