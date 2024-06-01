@@ -151,3 +151,54 @@ stateDiagram
     Rendering --> [*]
 
 ```
+
+## Шаблон проектування Null Object
+
+Посилання: https://refactoring.guru/introduce-null-object
+
+### Призначення та застосування шаблону
+Шаблон проектування Null Object використовується для забезпечення поведінки "порожнього" об'єкта, який можна використовувати як замінник null-посилання. Він допомагає уникнути перевірок на null, спрощуючи код та підвищуючи його надійність.
+
+### Основні випадки застосування:
+
+- Коли потрібно уникнути численних перевірок на null.
+- Коли потрібно надати дефолтну поведінку у випадках, коли об'єкт не наданий.
+- Коли використання null може викликати помилки або ускладнити логіку програми.
+
+
+### Опис основних структурних елементів
+- AbstractObject (Абстрактний Об'єкт): Інтерфейс або абстрактний клас, що визначає загальні методи для всіх конкретних та нульових об'єктів.
+- RealObject (Реальний Об'єкт): Клас, що реалізує AbstractObject і представляє собою реальну функціональність.
+- NullObject (Нульовий Об'єкт): Клас, що реалізує AbstractObject і надає дефолтну, "порожню" поведінку.
+
+### UML діаграма
+Діаграма класів:
+```mermaid
+classDiagram
+    class AbstractObject {
+        <<interface>>
+        +operation(): void
+    }
+    
+    class RealObject {
+        +operation(): void
+    }
+    
+    class NullObject {
+        +operation(): void
+    }
+    
+    AbstractObject <|-- RealObject
+    AbstractObject <|-- NullObject
+
+```
+Діаграма стану:
+```mermaid
+stateDiagram
+    [*] --> CheckObject
+    CheckObject --> RealOperation: isRealObject
+    CheckObject --> NullOperation: isNullObject
+    RealOperation --> [*]
+    NullOperation --> [*]
+
+```
