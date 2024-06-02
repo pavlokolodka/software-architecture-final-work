@@ -202,3 +202,68 @@ stateDiagram
     NullOperation --> [*]
 
 ```
+
+## Шаблон проектування Thread-Specific Storage
+
+Посилання: https://en.wikipedia.org/wiki/Thread-local_storage
+
+### Призначення та застосування шаблону
+
+Шаблон проектування Thread-Specific Storage використовується для забезпечення кожного потоку власним екземпляром змінних, що дозволяє потокам незалежно зберігати і доступатись до даних. Це особливо корисно в багатопотокових програмах для уникнення колізій при доступі до спільних даних та для збереження контексту потоку.
+
+### Основні випадки застосування:
+
+- Коли потоки потребують незалежні копії даних.
+- Коли необхідно уникнути використання синхронізації для доступу до спільних ресурсів.
+- Коли потоки потребують збереження інформації про свій стан між викликами методів.
+
+
+### Опис основних структурних елементів
+- Client: Потік, який використовує потоково-специфічне сховище для зберігання і доступу до даних.
+- ThreadLocal: Клас, який забезпечує кожному потоку власну копію змінної.
+- Storage: Власне об'єкт даних, що зберігається в потоково-специфічному сховищі.
+
+### UML діаграма
+
+Діаграма класів:
+
+```mermaid
+classDiagram
+    class Client {
+        -storage: ThreadLocal<Storage>
+        +setData(data: Data): void
+        +getData(): Data
+    }
+    
+    class ThreadLocal {
+        +get(): Storage
+        +set(Storage): void
+    }
+    
+    class Storage {
+        -data: Data
+        +getData(): Data
+        +setData(data: Data): void
+    }
+    
+    class Data {
+    }
+    
+    Client --> ThreadLocal
+    ThreadLocal --> Storage
+    Storage --> Data
+
+```
+
+Діаграма стану:
+
+```mermaid
+stateDiagram
+    [*] --> InitializeStorage
+    InitializeStorage --> AccessStorage: get()
+    AccessStorage --> ModifyStorage: setData()
+    ModifyStorage --> AccessStorage: get()
+    AccessStorage --> RetrieveData: getData()
+    RetrieveData --> [*]
+
+```
